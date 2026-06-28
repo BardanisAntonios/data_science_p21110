@@ -1,24 +1,24 @@
 # Traffic Speed Prediction using Deep Learning (LSTM)
 
-Το παρόν αποθετήριο περιέχει την ανάπτυξη και αξιολόγηση ενός μοντέλου βαθιάς μάθησης για την πρόβλεψη της μέσης ταχύτητας κυκλοφορίας σε αστικά οδικά δίκτυα. Αναπτύχθηκε στα πλαίσια της Απαλλακτικής Εργασίας του μαθήματος "Θέματα Επιστήμης Δεδομένων".
+This repository contains the implementation and evaluation of a deep learning model designed to forecast average traffic speeds in urban road networks. It was developed as the final assignment for the "Data Science Topics" course.
 
-**Συγγραφέας:** Μπαρδάνης Αντώνιος (Α.Μ.: Π21110)
+**Author:** Antonios Bardanis (Registration Number: P21110)
 
-## 🛠️ Τεχνολογίες & Βιβλιοθήκες
-* **Γλώσσα Προγραμματισμού:** Python
-* **Βαθιά Μάθηση (Deep Learning):** TensorFlow / Keras (Sequential, LSTM, Dense)[cite: 14]
-* **Ανάλυση Δεδομένων:** Pandas, NumPy, Scikit-learn (MinMaxScaler, Metrics)[cite: 14]
-* **Οπτικοποίηση & Χρονοσειρές:** Matplotlib, Seaborn, Statsmodels (ACF/PACF, Seasonal Decompose)[cite: 14]
+## 🛠️ Technology Stack
+* **Programming Language:** Python
+* **Deep Learning Framework:** TensorFlow / Keras (Sequential, LSTM, Dense)
+* **Data Manipulation:** Pandas, NumPy, Scikit-learn (MinMaxScaler, Metrics)
+* **Time-Series Analysis & Visualization:** Matplotlib, Seaborn, Statsmodels (ACF/PACF, Seasonal Decompose)
 
-## 📊 Σύνολο Δεδομένων (Dataset)
-Χρησιμοποιήθηκε το ανοιχτό σύνολο δεδομένων **PEMS-BAY**, το οποίο περιέχει μετρήσεις ταχύτητας από 325 επαγωγικούς αισθητήρες στην Bay Area της Καλιφόρνια. Τα δεδομένα καλύπτουν το πρώτο εξάμηνο του 2017 (1/1/2017 έως 30/6/2017) με καταγραφές ανά 5 λεπτά (288 βήματα ανά ημέρα)[cite: 14, 15].
+## 📊 Dataset
+The project utilizes the open **PEMS-BAY** dataset, which includes traffic speed measurements from 325 loop detectors in the California Bay Area. The extracted subset spans the first half of 2017 (Jan 1, 2017 - Jun 30, 2017), with data recorded at 5-minute intervals (288 steps per day).
 
-## ✨ Μεθοδολογία & Βασικά Χαρακτηριστικά
-* **Προεπεξεργασία & Feature Engineering:** Χειρισμός ελλιπών τιμών (time interpolation, bfill), κανονικοποίηση με `MinMaxScaler` (εφαρμοσμένη αυστηρά στο training set για αποφυγή data leakage), και δημιουργία νέων χρονικών μεταβλητών (ώρα, ημέρα, Σαββατοκύριακο, αργίες ΗΠΑ)[cite: 14, 15].
-* **Διαμόρφωση Προβλήματος (Sliding Window):** Μετατροπή της χρονοσειράς σε πρόβλημα επιβλεπόμενης μάθησης.
-* **Αρχιτεκτονική LSTM:** Το δίκτυο αποτελείται από πολλαπλά στρώματα LSTM (64 και 32 units) και ένα Dense layer εξόδου[cite: 14, 15]. Εκπαιδεύτηκε με τον Adam optimizer, loss function το MAE, και χρήση EarlyStopping[cite: 14, 15].
+## ✨ Methodology & Key Features
+* **Preprocessing & Feature Engineering:** Handled missing values (via time interpolation and backward filling), clipped outliers, and scaled data using `MinMaxScaler` (strictly fit on the training set to prevent data leakage). Additional temporal features were generated, including hour, day, weekend flags, and US holidays.
+* **Sliding Window Approach:** Transformed the time-series forecasting task into a supervised learning problem using sliding windows.
+* **LSTM Architecture:** The neural network features stacked LSTM layers (64 and 32 units) followed by a fully connected Dense output layer. The model was compiled with the Adam optimizer, MAE loss, and utilized EarlyStopping.
 
-## 📈 Σενάρια Πρόβλεψης & Αξιολόγηση
-Το μοντέλο αξιολογήθηκε βάσει των μετρικών MAE, MAPE, RMSE και R² σε δύο σενάρια:
-1. **Βραχυπρόθεσμη Πρόβλεψη:** Πρόβλεψη της επόμενης ώρας (ανά 5 λεπτά) βασισμένη σε ιστορικό 1 ώρας. Το μοντέλο παρουσίασε εξαιρετική ακρίβεια (π.χ. MAE ~2.8 mph στα πρώτα 5 λεπτά)[cite: 14, 15].
-2. **Μεσοπρόθεσμη Πρόβλεψη:** Πρόβλεψη των επόμενων 12 ωρών (ανά 1 ώρα) βασισμένη σε ιστορικό 2 ωρών. Τα σφάλματα αυξάνονται λογικά (π.χ. MAE 4.43 mph στη 12η ώρα), αναδεικνύοντας τη στοχαστική φύση της κυκλοφορίας σε μεγαλύτερους ορίζοντες[cite: 14, 15].
+## 📈 Prediction Scenarios & Evaluation
+The model's performance was evaluated using MAE, MAPE, RMSE, and R² across two main scenarios:
+1. **Short-Term Prediction:** Predicting the next 1 hour (at 5-minute steps) based on a 1-hour input history. The model showed high accuracy, maintaining a low MAE (~2.8 mph) for immediate horizons.
+2. **Medium-Term Prediction:** Predicting the next 12 hours (at 1-hour steps) based on a 2-hour input history. As expected, errors increased for distant horizons (MAE reached 4.43 mph at the 12th hour), highlighting the stochastic nature of long-term traffic flow.
